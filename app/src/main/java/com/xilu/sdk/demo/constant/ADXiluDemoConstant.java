@@ -164,7 +164,7 @@ public class ADXiluDemoConstant {
 
 
 
-    /*public static final String APP_ID = "qb9x34q9"; // 测试
+    public static final String APP_ID = "qb9x34q9"; // 测试
 
     public static String SPLASH_AD_POS_ID = "c26evznj"; // 测试
 
@@ -180,7 +180,7 @@ public class ADXiluDemoConstant {
 
     public static final String NATIVE_AD_POS_ID3 = "zy2z4bk9";
 
-    public static final String NATIVE_AD_POS_ID4 = "zy2z4bk9";*/
+    public static final String NATIVE_AD_POS_ID4 = "zy2z4bk9";
 
     public static String REWARD_VOD_AD_POS_ID = REWARD_VOD_AD_POS_ID1;
     public static String NATIVE_AD_POS_ID = NATIVE_AD_POS_ID1;
