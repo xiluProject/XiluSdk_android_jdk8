@@ -69,9 +69,6 @@ dependencies {
     // support支持库，如果是AndroidX请使用对应的支持库
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
-    // 微信SDK（core模块为compileOnly，app层引入运行时依赖）
-    implementation 'com.tencent.mm.opensdk:wechat-sdk-android:6.8.0'
-
     // ADXiluSdk核⼼库必须导⼊
     implementation(name: 'XiluSDKCore-v1.0.8.1', ext: 'aar')
     // ⼴点通AdapterSdk，可选的
