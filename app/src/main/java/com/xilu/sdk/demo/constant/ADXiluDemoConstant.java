@@ -11,6 +11,10 @@ public class ADXiluDemoConstant {
     //public static final String APP_ID = "n7v99s3c"; // 测试
     public static final String APP_ID = "gzhwjbrk"; // 育新人测试
     public static String SPLASH_AD_POS_ID = "txt9dx5s"; // 育新人测试
+
+    //public static final String APP_ID = "qb9x34q9"; // 带货app测试
+    //public static String SPLASH_AD_POS_ID = "c26evznj"; // 带货测试
+
     public static final String TAG = "DemoLog";
     /*
      * 开屏广告位ID
