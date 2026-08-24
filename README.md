@@ -145,13 +145,13 @@ dependencies {
     implementation(name: 'AdapterBZ-v1.0.8.4', ext: 'aar')
     implementation(name: 'BZ_AD_5.2.1.21', ext: 'aar')
 
-    // 如需在华为、荣耀设备上获取OAID，需要额外添加以下依赖，可选的
+    // 在华为、荣耀设备上获取OAID，需要额外添加以下依赖
     implementation 'com.huawei.hms:ads-identifier:3.4.62.300'
     implementation 'com.hihonor.mcs:ads-identifier:1.0.2.301'
 }
 ```
 
-如果添加了华为、荣耀 OAID 依赖，需要在工程根目录 build.gradle 的 repositories 中配置对应的 maven 仓库：
+添加了华为、荣耀 OAID 依赖，需要在工程根目录 build.gradle 的 repositories 中配置对应的 maven 仓库：
 
 ```java
 allprojects {
