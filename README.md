@@ -1,4 +1,4 @@
-# 西陆聚合广告SDK ——接入文档 V1.0.7
+# 西陆聚合广告SDK ——接入文档 V1.0.8.4
 
 
 
@@ -34,7 +34,7 @@ Xilu聚合广告SDK 主要由**ADXilu核心SDK（简称ADXiluSdk）**和一个�
 
 | Name         | 大小   | 版本号    |
 | ------------ | ----  |--------|
-| ADXilu基础包 | 0.43M | V1.0.7 |
+| ADXilu基础包 | 0.43M | V1.0.8.4 |
 
 
 
@@ -117,33 +117,51 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0'
 
     // ADXiluSdk核⼼库必须导⼊
-    implementation(name: 'XiluSDKCore-v1.0.7', ext: 'aar')
+    implementation(name: 'XiluSDKCore-v1.0.8.4', ext: 'aar')
 
     // ⼴点通AdapterSdk，可选的
-    implementation(name: 'AdapterGDT-v1.0.7', ext: 'aar')
+    implementation(name: 'AdapterGDT-v1.0.8.4', ext: 'aar')
     implementation(name: 'GDT_SDK.4.662.1532', ext: 'aar')
 
     // 穿山甲AdapterSdk，可选的
-    implementation(name: 'AdapterCSJ-v1.0.7', ext: 'aar')
+    implementation(name: 'AdapterCSJ-v1.0.8.4', ext: 'aar')
     implementation(name: 'open_ad_sdk_7.5.1.0', ext: 'aar')
 
     // 百青藤AdapterSdk，可选的
-    implementation(name: 'AdapterBQT-v1.0.7', ext: 'aar')
+    implementation(name: 'AdapterBQT-v1.0.8.4', ext: 'aar')
     implementation(name: 'Baidu_MobAds_SDK-release_v9.450', ext: 'aar')
 
     // 快⼿AdapterSdk，可选的
-    implementation(name: 'AdapterKS-v1.0.7', ext: 'aar')
+    implementation(name: 'AdapterKS-v1.0.8.4', ext: 'aar')
     implementation(name: 'KS_AD_4.4.20.1', ext: 'aar')
 
     // 美数AdapterSdk，可选的
-    implementation(name: 'AdapterMS-v1.0.7', ext: 'aar')
+    implementation(name: 'AdapterMS-v1.0.8.4', ext: 'aar')
     implementation(name: 'MS_AD_2.5.7.7', ext: 'aar')
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.squareup.okhttp3:okhttp:3.12.1'
 
     // 倍孜AdapterSdk，可选的
-    implementation(name: 'AdapterBZ-v1.0.7', ext: 'aar')
+    implementation(name: 'AdapterBZ-v1.0.8.4', ext: 'aar')
     implementation(name: 'BZ_AD_5.2.1.21', ext: 'aar')
+
+    // 如需在华为、荣耀设备上获取OAID，需要额外添加以下依赖，可选的
+    implementation 'com.huawei.hms:ads-identifier:3.4.62.300'
+    implementation 'com.hihonor.mcs:ads-identifier:1.0.2.301'
+}
+```
+
+如果添加了华为、荣耀 OAID 依赖，需要在工程根目录 build.gradle 的 repositories 中配置对应的 maven 仓库：
+
+```java
+allprojects {
+    repositories {
+        ...
+        // 华为仓库
+        maven { url 'https://developer.huawei.com/repo/' }
+        // 荣耀仓库
+        maven { url 'https://developer.hihonor.com/repo/' }
+    }
 }
 ```
 
@@ -162,7 +180,7 @@ dependencies {
 
 1. 移除己方使用的三方广告SDK和相关配置；
 
-> **由于穿山甲(头条)渠道支持了Android R，引入了Android R的 \<queries\> 标签,需要对gradle版本进行限制，限制范围为：3.3.3、 3.4.3、 3.5.4、3.6.4、4.0.1 ，开发者根据自身情况酌情升级**
+> **由于穿山甲(头条)渠道支持了Android R，引入了Android R的 \<queries\> 标签，需要使用支持该标签的gradle插件版本：3.3.3、 3.4.3、 3.5.4、3.6.4、4.0.1及以上版本（Demo使用4.1.1验证通过），开发者根据自身情况酌情升级**
 
 >  **如对接华为广告联盟，激励视频要提前预加载，并且播放完成后需要预加载下一个激励视频，华为渠道点击事件无法统计；横幅广告使用场景是程序页面的顶部或者底部。**
 
@@ -461,6 +479,8 @@ com.xilu.sdk.ADXiluSdk
 | ------------ | ---- |
 | init(Context context, ADXiluInitConfig config) | 构造方法。参数说明：context（初始化SDK请传入Application的上下文对象）、config（初始化配置信息）。|
 | init(Context context, ADXiluInitConfig config, ADXiluInitListener listener) | 构造方法。参数说明：context（初始化SDK请传入Application的上下文对象）、config（初始化配置信息）、listener（初始化状态监听）。|
+| isInit() | 判断SDK是否初始化完成。SDK初始化是异步的，请求广告前请确保初始化已完成。|
+| setmInitListener(ADXiluInitListener listener) | 设置初始化状态监听。可在init调用之前设置，SDK初始化成功或失败后会回调该监听。|
 
 **ADXiluInitConfig**
 
@@ -502,6 +522,28 @@ ADXiluSdk.getInstance().init(Context context, new ADXiluInitConfig.Builder()
     .debug(boolean debug)
     ...
     .build());
+```
+
+**注意：SDK初始化是异步的**，请在初始化完成后再请求广告，可通过以下两种方式处理：
+
+```java
+// 方式一：通过isInit()判断是否初始化完成
+if (ADXiluSdk.getInstance().isInit()) {
+    // 已初始化完成，可以请求广告
+} else {
+    // 方式二：设置初始化监听，在回调中处理
+    ADXiluSdk.getInstance().setmInitListener(new ADXiluInitListener() {
+        @Override
+        public void onSuccess() {
+            // 初始化成功，可以请求广告
+        }
+
+        @Override
+        public void onFailed(String error) {
+            // 初始化失败
+        }
+    });
+}
 ```
 
 
@@ -675,6 +717,7 @@ com.xilu.sdk.ad.ADXiluBannerAd
 | setOnlySupportPlatform(String platform)                | 设置广告定向，仅请求某一渠道。参数说明：platform（<a href="#platform_name">渠道名</a>）。注：仅debug模式为true时生效。 |
 | setListener(ADXiluBannerAdListener listener)           | 设置广告相关状态。参数说明：listener（广告状态监听器）。     |
 | setLocalExtraParams(ADXiluExtraParams extraParams)     | 设置额外参数。参数说明：extraParams（广告额外参数）。        |
+| setAutoRefreshInterval(int interval)                   | 设置Banner自刷新间隔。参数说明：interval（自刷新间隔，单位：秒，范围30～120）。注意：如果设置了自刷新，初始化ADXiluSDK时传入的context必须是Application的上下文对象。 |
 | loadAd(String posId)                                   | 请求广告并展示。参数说明：posId（广告位ID）。                |
 | release()                                              | 释放广告。                                                   |
 
@@ -843,7 +886,7 @@ com.xilu.sdk.ad.data.ADXiluNativeExpressAdInfo
 
 | 方法名         | 类型 | 介绍 |
 | ------------ | ---- | ---- |
-| getNativeExpressAdView() | View | 获取的是整个模板广告视图。|
+| getNativeExpressAdView(ViewGroup container) | View | 获取的是整个模板广告视图。参数说明：container（承载广告的容器）。|
 | render(ViewGroup container) | void | 渲染视图，调用该方法才能响应曝光、点击等操作，影响广告收益。参数说明：container（承载广告的容器，不能为空）|
 
 **自渲染广告对象ADXiluNativeFeedAdInfo继承自ADXiluNativeAdInfo**
@@ -860,7 +903,7 @@ com.xilu.sdk.ad.data.ADXiluNativeFeedAdInfo
 | getImageUrl() | String | 图片地址，可能为空。。|
 | getImageUrlList() | List\<String\> | 广告图片集合，可能为空。|
 | hasMediaView() | boolean | 判断是否包含多媒体广告视图。|
-| getMediaView() | View | 获取的是多媒体广告视图。|
+| getMediaView(ViewGroup container) | View | 获取的是多媒体广告视图。参数说明：container（承载多媒体视图的容器）。|
 | getPlatformIcon() | int | 获取广告平台角标，资源文件地址。|
 | registerViewForInteraction(ViewGroup container, View... actionViews) | void | 注册广告视图。参数说明：container（广告容器）、<br>actionViews（可点击的布局）|
 | registerCloseView(View close) | void | 注册关闭按钮。参数说明：close（点击关闭的view，不注册将不会回调onAdClose事件）|
@@ -1036,6 +1079,9 @@ com.xilu.sdk.ad.data.ADXiluRewardVodAdInfo
 | 方法名         | 介绍 |
 | ------------ | ---- |
 | showRewardVod(Activity activity) | 展示广告。参数说明：activity（当前页面activity对象）。|
+| isReady() | 判断广告是否就绪。|
+| hasExpired() | 判断广告是否已过期。|
+| release() | 释放广告对象。|
 | getPlatform() | 获取三方广告平台名称，返回String类型。|
 | getECPM() | 获取ECPM，返回Double类型（单位：元）。|
 
@@ -1156,7 +1202,10 @@ com.xilu.sdk.ad.data.ADXiluFullScreenVodAdInfo
 
 | 方法名         | 介绍 |
 | ------------ | ---- |
-| showFullScreenVod(Activity activity) | 展示广告。参数说明：activity（当前页面activity对象）。|
+| showFullScreenVod(Activity activity) | 展示广告。参数说明：activity（当前页面activity对象）。展示前建议先通过isReady()和hasExpired()校验广告状态。|
+| isReady() | 判断广告是否就绪。|
+| hasExpired() | 判断广告是否已过期。|
+| release() | 释放广告对象。|
 | getPlatform() | 获取三方广告平台名称，返回String类型。|
 | getECPM() | 获取ECPM，返回Double类型（单位：元）。|
 
@@ -1270,6 +1319,9 @@ com.xilu.sdk.ad.data.ADXiluInterstitialAdInfo
 | 方法名         | 介绍 |
 | ------------ | ---- |
 | showInterstitial(Activity activity) | 展示广告。参数说明：activity（当前页面activity对象）。|
+| isReady() | 判断广告是否就绪。|
+| hasExpired() | 判断广告是否已过期。|
+| release() | 释放广告对象。|
 | getPlatform() | 获取三方广告平台名称，返回String类型。|
 | getECPM() | 获取ECPM，返回Double类型（单位：元）。|
 

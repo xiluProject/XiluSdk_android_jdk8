@@ -56,8 +56,6 @@ public class AppApplication extends Application {
                 .isCanUseOaid(true)
                 // 是否过滤第三方平台的问题广告（例如: 已知某个广告平台在某些机型的Banner广告可能存在问题，如果开启过滤，则在该机型将不再去获取该平台的Banner广告）
                 .filterThirdQuestion(true)
-                // 是否允许多进程
-                .setMultiprocess(false)
                 // 是否允许使用传感器
                 .isCanUseSensor(false)
                 // 设置微信AppId
